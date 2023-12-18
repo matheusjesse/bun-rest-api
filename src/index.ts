@@ -1,7 +1,23 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+import { PrismaClient } from "@prisma/client";
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+const db = new PrismaClient()
+
+const app = new Elysia()
+  .post(
+    '/sign-up',
+    async ({body}) => db.user.create({
+      data: body
+    }), 
+    {
+      body: t.Object({
+        username: t.String(),
+        password: t.String({
+          minLength: 8
+        })
+      })
+    }
+  ).listen(3000)
+
+  console.log(`🦊Server runing at ${app.server?.hostname}:${app.server?.port}`)
