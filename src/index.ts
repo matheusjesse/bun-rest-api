@@ -13,12 +13,14 @@ const app = new Elysia()
       data: body
     }), 
     {
-      error({ code }) {
-        switch (code) {
+      error(erro) {
+        switch (erro.code) {
           case codeError:
             return {
               error: 'Username must be unique'
             }
+            default:
+              return {message: erro.error.message}
         }
       },
       body: t.Object({
