@@ -4,6 +4,8 @@ import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient()
 
+const codeError: string = 'P2002';
+
 const app = new Elysia()
   .post(
     '/sign-up',
@@ -11,6 +13,14 @@ const app = new Elysia()
       data: body
     }), 
     {
+      error({ code }) {
+        switch (code) {
+          case codeError:
+            return {
+              error: 'Username must be unique'
+            }
+        }
+      },
       body: t.Object({
         username: t.String(),
         password: t.String({
